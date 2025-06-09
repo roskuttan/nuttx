@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <assert.h>
 
+#include <nuttx/sched.h>
 #include <nuttx/semaphore.h>
 #include <nuttx/atomic.h>
 
@@ -118,6 +119,9 @@ int sem_post(FAR sem_t *sem)
 
 int nxsem_post(FAR sem_t *sem)
 {
+  bool mutex;
+  bool fastpath = true;
+
   DEBUGASSERT(sem != NULL);
 
   /* We don't do atomic fast path in case of LIBC_ARCH_ATOMIC because that
@@ -127,19 +131,60 @@ int nxsem_post(FAR sem_t *sem)
 
 #ifndef CONFIG_LIBC_ARCH_ATOMIC
 
-  if ((sem->flags & SEM_TYPE_MUTEX)
-#  if defined(CONFIG_PRIORITY_PROTECT) || defined(CONFIG_PRIORITY_INHERITANCE)
-      && (sem->flags & SEM_PRIO_MASK) == SEM_PRIO_NONE
-#  endif
-      )
+  mutex = NXSEM_IS_MUTEX(sem);
+
+  /* Disable fast path if priority protection is enabled on the semaphore */
+
+#  ifdef CONFIG_PRIORITY_PROTECT
+  if ((sem->flags & SEM_PRIO_MASK) == SEM_PRIO_PROTECT)
     {
-      int32_t old = 0;
-      if (atomic_try_cmpxchg_release(NXSEM_COUNT(sem), &old, 1))
+      fastpath = false;
+    }
+#  endif
+
+  /* Disable fast path on a counting semaphore with priority inheritance */
+
+#  ifdef CONFIG_PRIORITY_INHERITANCE
+  if (!mutex && (sem->flags & SEM_PRIO_MASK) != SEM_PRIO_NONE)
+    {
+      fastpath = false;
+    }
+#  endif
+
+  if (fastpath)
+    {
+      int32_t old;
+      int32_t new;
+      FAR atomic_t *val = mutex ? NXSEM_MHOLDER(sem) : NXSEM_COUNT(sem);
+
+      if (mutex)
+        {
+          old = _SCHED_GETTID();
+          new = NXSEM_NO_MHOLDER;
+        }
+      else
+        {
+          old = atomic_read(val);
+
+          if (old < 0)
+            {
+              goto out;
+            }
+
+          new = old + 1;
+        }
+
+      if (atomic_try_cmpxchg_release(val, &old, new))
         {
           return OK;
         }
     }
 
+out:
+
+#else
+  UNUSED(mutex);
+  UNUSED(fastpath);
 #endif
 
   return nxsem_post_slow(sem);

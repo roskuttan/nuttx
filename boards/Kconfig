@@ -27,6 +27,14 @@ config ARCH_BOARD_ARDUINO_MEGA2560
 		This option selects the Arduino Mega 2560 board featuring the Atmel
 		Atmega2560 MCU running at 16 MHz.
 
+config ARCH_BOARD_ELEGOO_MEGA2560R3
+	bool "Elegoo Mega 2560r3"
+	depends on ARCH_CHIP_ATMEGA2560
+	select ARCH_HAVE_LEDS
+	---help---
+		This option selects the Elegoo Mega 2560 board featuring the Atmel
+		Atmega2560 MCU running at 16 MHz.
+
 config ARCH_BOARD_ARDUINO_DUE
 	bool "Arduino Due"
 	depends on ARCH_CHIP_ATSAM3X8E
@@ -79,6 +87,16 @@ config ARCH_BOARD_AVR32DEV1
 		AVR32 family.  That patched GNU toolchain is available only from the
 		Atmel website.  STATUS: This port is functional but very basic.  There
 		are configurations for NSH and the OS test.
+
+config ARCH_BOARD_AVRDX_BREADXAVR
+	bool "AVR Dx chip on breadboard"
+	depends on ARCH_CHIP_AVRDX
+	select ARCH_HAVE_LEDS
+	select ARCH_HAVE_BUTTONS
+	select ARCH_HAVE_IRQBUTTONS
+	---help---
+		This is a board used to make something use an AVRnDx core
+		so it can be developed and tested.
 
 config ARCH_BOARD_AXOLOTI
 	bool "Axoloti board"
@@ -410,6 +428,15 @@ config ARCH_BOARD_ESP32C3_GENERIC
 		The ESP32-C3-DevKitM-1 version contains the ESP32-C3-MINI-1 module and the
 		ESP32-C3-DevKitC-02 version the ESP32-C3-WROOM-02.
 
+config ARCH_BOARD_ESP32C3_XIAO
+	bool "Seeed Studio XIAO ESP32-C3"
+	depends on ESPRESSIF_ESP32C3
+	select ARCH_HAVE_BUTTONS
+	select ARCH_HAVE_IRQBUTTONS
+	---help---
+	    The XIAO-ESP32C3 from Seeed Studio features the ESP32-C3 CPU with a RISC-V core,
+	    supporting IEEE 802.11 b/g/n WiFi, and Bluetooth 5 (BLE) protocols.
+
 config ARCH_BOARD_ESP32S2_KALUGA_1
 	bool "Espressif ESP32-S2-Kaluga-1 V1.3"
 	depends on ARCH_CHIP_ESP32S2WROVER
@@ -558,6 +585,13 @@ config ARCH_BOARD_ESP32C6_DEVKITM
 	select ARCH_HAVE_IRQBUTTONS
 	---help---
 		The ESP32-C6 DevKitM-1 features the ESP32-C6 CPU with a RISC-V core.
+
+config ARCH_BOARD_ESP32C6_XIAO
+		bool "Seeed Studio XIAO ESP32C6"
+		depends on ARCH_CHIP_ESP32C6WROOM1
+		---help---
+		The XIAO-ESP32C6 from Seeed Studio features the ESP32-C6 CPU with two RISC-V cores,
+		supporting IEEE 802.11 b/g/n/ax WiFi, and Bluetooth 5 (BLE) protocols.
 
 config ARCH_BOARD_ESP32H2_DEVKIT
 	bool "Espressif ESP32-H2 Generic DevKit"
@@ -1796,6 +1830,16 @@ config ARCH_BOARD_NUCLEO_G071RB
 	---help---
 		This is a minimal configuration that supports low-level test of the
 		Nucleo G071RB in the NuttX source tree.
+
+config ARCH_BOARD_NUCLEO_G0B1RE
+	bool "STM32G0B1 Nucleo G0B1RE"
+	depends on ARCH_CHIP_STM32G0B1RE
+	select ARCH_HAVE_LEDS
+	select ARCH_HAVE_BUTTONS
+	select ARCH_HAVE_IRQBUTTONS
+	---help---
+		This is a minimal configuration that supports low-level test of the
+		Nucleo G0B1RE in the NuttX source tree.
 
 config ARCH_BOARD_WEACT_STM32H743
 	bool "WeAct Studio STM32H743"
@@ -3398,6 +3442,7 @@ config ARCH_BOARD
 	default "arduino-nano-33ble-rev2"   if ARCH_BOARD_ARDUINO_NANO_33BLE_REV2
 	default "arty_a7"                   if ARCH_BOARD_ARTY_A7
 	default "avr32dev1"                 if ARCH_BOARD_AVR32DEV1
+	default "breadxavr"                 if ARCH_BOARD_AVRDX_BREADXAVR
 	default "axoloti"                   if ARCH_BOARD_AXOLOTI
 	default "bambino-200e"              if ARCH_BOARD_BAMBINO_200E
 	default "bl602evb"                  if ARCH_BOARD_BL602EVB
@@ -3413,6 +3458,7 @@ config ARCH_BOARD
 	default "efm32-g8xx-stk"            if ARCH_BOARD_EFM32G8XXSTK
 	default "efm32gg-stk3700"           if ARCH_BOARD_EFM32GG_STK3700
 	default "ekk-lm3s9b96"              if ARCH_BOARD_EKKLM3S9B96
+	default "elegoo-mega2560r3"         if ARCH_BOARD_ELEGOO_MEGA2560R3
 	default "emw3162"                   if ARCH_BOARD_EMW3162
 	default "quickfeather"              if ARCH_BOARD_QUICKFEATHER
 	default "esp32-audio-kit"           if ARCH_BOARD_ESP32_AUDIO_KIT
@@ -3427,6 +3473,7 @@ config ARCH_BOARD
 	default "esp32c3-devkit"            if ARCH_BOARD_ESP32C3_DEVKIT
 	default "esp32c3-devkit-rust-1"     if ARCH_BOARD_ESP32C3_DEVKIT_RUST1
 	default "esp32c3-generic"           if ARCH_BOARD_ESP32C3_GENERIC
+	default "esp32c3-xiao"              if ARCH_BOARD_ESP32C3_XIAO
 	default "esp32s2-kaluga-1"          if ARCH_BOARD_ESP32S2_KALUGA_1
 	default "esp32s2-saola-1"           if ARCH_BOARD_ESP32S2_SAOLA_1
 	default "franzininho-wifi"          if ARCH_BOARD_FRANZININHO_WIFI
@@ -3441,6 +3488,7 @@ config ARCH_BOARD
 	default "lckfb-szpi-esp32s3"        if ARCH_BOARD_ESP32S3_LCKFB_SZPI
 	default "esp32c6-devkitc"           if ARCH_BOARD_ESP32C6_DEVKITC
 	default "esp32c6-devkitm"           if ARCH_BOARD_ESP32C6_DEVKITM
+	default "esp32c6-xiao"              if ARCH_BOARD_ESP32C6_XIAO
 	default "esp32h2-devkit"            if ARCH_BOARD_ESP32H2_DEVKIT
 	default "et-stm32-stamp"            if ARCH_BOARD_ET_STM32_STAMP
 	default "tlsr8278adk80d"            if ARCH_BOARD_TLSR8278ADK80D
@@ -3542,6 +3590,7 @@ config ARCH_BOARD
 	default "stm32g071b-disco"          if ARCH_BOARD_STM32G071B_DISCO
 	default "nucleo-g070rb"             if ARCH_BOARD_NUCLEO_G070RB
 	default "nucleo-g071rb"             if ARCH_BOARD_NUCLEO_G071RB
+	default "nucleo-g0b1re"             if ARCH_BOARD_NUCLEO_G0B1RE
 	default "weact-stm32h743"           if ARCH_BOARD_WEACT_STM32H743
 	default "nucleo-h743zi"             if ARCH_BOARD_NUCLEO_H743ZI
 	default "nucleo-h743zi2"            if ARCH_BOARD_NUCLEO_H743ZI2
@@ -4206,6 +4255,9 @@ endif
 if ARCH_BOARD_NUCLEO_G071RB
 source "boards/arm/stm32f0l0g0/nucleo-g071rb/Kconfig"
 endif
+if ARCH_BOARD_NUCLEO_G0B1RE
+source "boards/arm/stm32f0l0g0/nucleo-g0b1re/Kconfig"
+endif
 if ARCH_BOARD_NUCLEO_L073RZ
 source "boards/arm/stm32f0l0g0/nucleo-l073rz/Kconfig"
 endif
@@ -4533,6 +4585,9 @@ endif
 if ARCH_BOARD_AVR32DEV1
 source "boards/avr/at32uc3/avr32dev1/Kconfig"
 endif
+if ARCH_BOARD_AVRDX_BREADXAVR
+source "boards/avr/avrdx/breadxavr/Kconfig"
+endif
 if ARCH_BOARD_MIZAR32A
 source "boards/avr/at32uc3/mizar32a/Kconfig"
 endif
@@ -4550,6 +4605,9 @@ source "boards/avr/atmega/amber/Kconfig"
 endif
 if ARCH_BOARD_ARDUINO_MEGA2560
 source "boards/avr/atmega/arduino-mega2560/Kconfig"
+endif
+if ARCH_BOARD_ELEGOO_MEGA2560R3
+source "boards/avr/atmega/elegoo-mega2560r3/Kconfig"
 endif
 if ARCH_BOARD_MOTEINO_MEGA
 source "boards/avr/atmega/moteino-mega/Kconfig"
@@ -4647,6 +4705,9 @@ endif
 if ARCH_BOARD_ESP32C3_GENERIC
 source "boards/risc-v/esp32c3/esp32c3-generic/Kconfig"
 endif
+if ARCH_BOARD_ESP32C3_XIAO
+source "boards/risc-v/esp32c3/esp32c3-xiao/Kconfig"
+endif
 if ARCH_BOARD_ESP32S2_KALUGA_1
 source "boards/xtensa/esp32s2/esp32s2-kaluga-1/Kconfig"
 endif
@@ -4688,6 +4749,9 @@ endif
 #endif
 #if ARCH_BOARD_ESP32C6_DEVKITM
 #source "boards/risc-v/esp32c6/esp32c6-devkitm/Kconfig"
+#endif
+#if ARCH_BOARD_ESP32C6_XIAO
+#source "boards/risc-v/esp32c6/esp32c6-xiao/Kconfig"
 #endif
 if ARCH_BOARD_ESP32H2_DEVKIT
 source "boards/risc-v/esp32h2/esp32h2-devkit/Kconfig"

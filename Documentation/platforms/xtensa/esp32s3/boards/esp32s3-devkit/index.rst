@@ -2,6 +2,8 @@
 ESP32S3-DevKit
 ==============
 
+.. tags:: chip:esp32, chip:esp32s3
+
 The `ESP32S3 DevKit <https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/hw-reference/esp32s3/user-guide-devkitc-1.html>`_ is a development board for the ESP32-S3 SoC from Espressif, based on a ESP32-S3-WROOM-1 module.
 
 .. list-table::
@@ -179,9 +181,9 @@ the following output is expected::
     cap_main: Hardware initialized. Opening the capture device: /dev/capture0
     cap_main: Number of samples: 0
     pwm duty cycle: 50 %
-    pwm frequence: 50 Hz
+    pwm frequency: 50 Hz
     pwm duty cycle: 50 %
-    pwm frequence: 50 Hz
+    pwm frequency: 50 Hz
 
 coremark
 --------
@@ -254,6 +256,41 @@ interrupt fires::
 
 The pin is configured to trigger an interrupt on the rising edge, so after
 issuing the above command, connect it to 3.3V.
+
+To use dedicated gpio for controlling multiple gpio pin at the same time
+or having better response time, you need to enable
+`CONFIG_ESPRESSIF_DEDICATED_GPIO` option. Dedicated GPIO is suitable
+for faster response times required applications like simulate serial/parallel
+interfaces in a bit-banging way.
+After this option enabled GPIO4 and GPIO5 pins are ready to used as dedicated GPIO pins
+as input/output mode. These pins are for example, you can use any pin up to 8 pins for
+input and 8 pins for output for dedicated gpio.
+To write and read data from dedicated gpio, you need to use
+`write` and `read` calls.
+
+The following snippet demonstrates how to read/write to dedicated GPIO pins:
+
+.. code-block:: C
+
+    int fd; = open("/dev/dedic_gpio0", O_RDWR);
+    int rd_val = 0;
+    int wr_mask = 0xffff;
+    int wr_val = 3;
+
+    while(1)
+      {
+        write(fd, &wr_val, wr_mask);
+        if (wr_val == 0)
+          {
+            wr_val = 3;
+          }
+        else
+          {
+            wr_val = 0;
+          }
+        read(fd, &rd_val, sizeof(uint32_t));
+        printf("rd_val: %d", rd_val);
+      }
 
 i2c
 ---
@@ -436,7 +473,7 @@ To test it, just run the ``oneshot`` example::
 qencoder
 ---
 
-This configuration demostrates the use of Quadrature Encoder connected to pins
+This configuration demonstrates the use of Quadrature Encoder connected to pins
 GPIO10 and GPIO11. You can start measurement of pulses using the following
 command (by default, it will open ``\dev\qe0`` device and print 20 samples
 using 1 second delay)::
@@ -654,6 +691,19 @@ You can set an alarm, check its progress and receive a notification after it exp
     Opening /dev/rtc0
     Alarm 0 is active with 10 seconds to expiration
     nsh> alarm_daemon: alarm 0 received
+
+sdm
+---
+
+This configuration enables the support for the Sigma-Delta Modulation (SDM) driver
+which can be used for LED dimming, simple dac with help of an low pass filter either
+active or passive and so on. ESP32-S3 supports 1 group of SDM up to 8 channels with
+any GPIO up to user. This configuration enables 1 channel of SDM on GPIO5. You can test
+DAC feature with following command with connecting simple LED on GPIO5
+
+    nsh> dac -d 100 -s 10 test
+
+After this command you will see LED will light up in different brightness.
 
 sdmmc
 -----

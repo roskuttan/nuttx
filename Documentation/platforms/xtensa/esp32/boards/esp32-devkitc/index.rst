@@ -2,6 +2,8 @@
 ESP32 DevKitC
 =============
 
+.. tags:: chip:esp32, chip:esp32wroom32
+
 The `ESP32 DevKitC <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/modules-and-boards.html#esp32-devkitc-v4>`_ is a development board for the ESP32 SoC from Espressif, based on a ESP-WROOM-32 module. You can find the original V2 version and the newer V4 variant. They are
 pin compatible.
 
@@ -344,9 +346,9 @@ the following output is expected::
     cap_main: Hardware initialized. Opening the capture device: /dev/capture0
     cap_main: Number of samples: 0
     pwm duty cycle: 50 %
-    pwm frequence: 50 Hz
+    pwm frequency: 50 Hz
     pwm duty cycle: 50 %
-    pwm frequence: 50 Hz
+    pwm frequency: 50 Hz
 
 coremark
 --------
@@ -357,6 +359,13 @@ disables the NuttShell to get the best possible score.
 
 .. note:: As the NSH is disabled, the application will start as soon as the
   system is turned on.
+
+crypto
+--------
+
+This configuration enables support for the cryptographic hardware and
+the /dev/crypto device file. Currently, only the hashing operation is
+supported.
 
 cxx
 ---
@@ -883,7 +892,7 @@ To test it, just execute the ``pwm`` application::
 qencoder
 ---
 
-This configuration demostrates the use of Quadrature Encoder connected to pins
+This configuration demonstrates the use of Quadrature Encoder connected to pins
 GPIO10 and GPIO11. You can start measurement of pulses using the following
 command (by default, it will open ``\dev\qe0`` device and print 20 samples
 using 1 second delay)::
@@ -928,6 +937,19 @@ You can set an alarm, check its progress and receive a notification after it exp
     Opening /dev/rtc0
     Alarm 0 is active with 10 seconds to expiration
     nsh> alarm_daemon: alarm 0 received
+
+sdm
+---
+
+This configuration enables the support for the Sigma-Delta Modulation (SDM) driver
+which can be used for LED dimming, simple dac with help of an low pass filter either
+active or passive and so on. ESP32 supports 1 group of SDM up to 8 channels with
+any GPIO up to user. This configuration enables 1 channel of SDM on GPIO5. You can test
+DAC feature with following command with connecting simple LED on GPIO5
+
+    nsh> dac -d 100 -s 10 test
+
+After this command you will see LED will light up in different brightness.
 
 smp
 ---
